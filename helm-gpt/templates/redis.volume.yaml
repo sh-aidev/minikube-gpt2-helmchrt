@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.redisMap.pvName }}
+spec:
+  accessModes:
+    - {{ .Values.redisMap.pvStorageMode }}
+  storageClassName: {{ .Values.redisMap.storageClassName }}
+  capacity:
+    storage: {{ .Values.redisMap.pvStorageSize }}
+  hostPath:
+    path: {{ .Values.redisMap.storagePath }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.redisMap.pvcName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: {{ .Values.redisMap.storageClassName }}
+  accessModes:
+    - {{ .Values.redisMap.pvcStorageMode }}
+  volumeName: {{ .Values.redisMap.pvName }}
+  resources:
+    requests:
+      storage: {{ .Values.redisMap.pvcStorageSize }}

@@ -1,0 +1,46 @@
+namespace: default
+
+appName:
+  model: 'model-serve'
+  web: 'web-serve'
+  redis: 'redis-db'
+
+model: "gpt2"
+
+configMap:
+  modelServer: "model-config-v1.0"
+  redis: "redis-config-v1.0"
+
+secretKey:
+  redis: "redis-secret-v1.0"
+
+image:
+  modelServer: "gpt-model-server:latest"
+  webServer: "gpt-web-server:latest"
+  redis: "redis:7.2.1"
+
+hostname: "fastapi.gpt"
+
+envName:
+  redisHost: "REDIS_HOST"
+  redisPort: "REDIS_PORT"
+  redisPassword: "REDIS_PASSWORD"
+  modelName: "HF_MODEL"
+  modelServerUrl: "MODEL_SERVER_URL"
+
+port:
+  modelService: 9000
+  webService: 8000
+
+redisMap:
+  pvName: "redis-pv"
+  pvcName: "redis-pvc"
+  pvStorageSize: "10Gi"
+  pvcStorageSize: "5Gi"
+  pvStorageMode: "ReadWriteOnce"
+  pvcStorageMode: "ReadWriteOnce"
+  storageClassName: "local-storage"
+  storagePath: "/data/redis-pv/"
+  volName: "redis-storage"
+  containerName: "redis-master"
+  password: "cmVhbGx5ZGlmZmljdWx0cGFzc3dvcmQ="

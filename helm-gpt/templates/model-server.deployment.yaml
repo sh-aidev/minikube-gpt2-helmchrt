@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName.model }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName.model }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName.model }}
+    spec:
+      containers:
+      - name: {{ .Values.appName.model }}
+        image: {{ .Values.image.modelServer }}
+        imagePullPolicy: Never
+        # resources:
+        #   limits:
+        #     memory: "600Mi"
+        #     cpu: "500m"
+        ports:
+        - containerPort: 80
+        env:
+          - name: {{ .Values.envName.redisHost }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.redis }}
+                key: hostname
+          - name: {{ .Values.envName.redisPort }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.redis }}
+                key: port
+          - name: {{ .Values.envName.redisPassword }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secretKey.redis }}
+                key: db_password
+          - name: {{ .Values.envName.modelName }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.modelServer }}
+                key: hf_model

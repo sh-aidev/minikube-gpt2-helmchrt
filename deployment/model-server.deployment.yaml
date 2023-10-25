@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-server
+  template:
+    metadata:
+      labels:
+        app: model-server
+    spec:
+      containers:
+      - name: model-server
+        image: gpt-model-server:latest
+        imagePullPolicy: Never
+        # resources:
+        #   limits:
+        #     memory: "600Mi"
+        #     cpu: "500m"
+        ports:
+        - containerPort: 80
+        env:
+          - name: REDIS_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: redis-config
+                key: hostname
+          - name: REDIS_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: redis-config
+                key: port
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: db_password
+          - name: HF_MODEL
+            valueFrom:
+              configMapKeyRef:
+                name: model-server-config
+                key: hf_model

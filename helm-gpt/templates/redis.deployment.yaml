@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Values.appName.redis }}
+    namespace: {{ .Values.namespace }}
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: {{ .Values.appName.redis }}
+            role: master
+    template:
+        metadata:
+            labels:
+                app: {{ .Values.appName.redis }}
+                role: master
+        spec:
+            volumes:
+            - name: {{ .Values.redisMap.volName }}
+              persistentVolumeClaim:
+                claimName: {{ .Values.redisMap.pvcName }}
+            containers:
+                - name: {{ .Values.redisMap.containerName }}
+                  image: {{ .Values.image.redis }}
+                  resources:
+                      limits:
+                          cpu: 200m
+                          memory: 200Mi
+                  command:
+                      - redis-server
+                  args:
+                      - --requirepass
+                      - $({{ .Values.envName.redisPassword }})
+                  ports:
+                      - containerPort: 6379
+                  env:
+                    - name: {{ .Values.envName.redisPassword }}
+                      valueFrom:
+                        secretKeyRef:
+                          name: {{ .Values.secretKey.redis }}
+                          key: db_password

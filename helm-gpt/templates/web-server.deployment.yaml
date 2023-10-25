@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName.web }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appName.web }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.appName.web }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName.web }}
+    spec:
+      containers:
+      - name: {{ .Values.appName.web }}
+        image: {{ .Values.image.webServer }}
+        imagePullPolicy: Never
+        # resources:
+        #   limits:
+        #     memory: "200Mi"
+        #     cpu: "500m"
+        ports:
+          - containerPort: 80
+        env:
+          - name: {{ .Values.envName.redisHost }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.redis }}
+                key: hostname
+          - name: {{ .Values.envName.redisPort }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.redis }}
+                key: port
+          - name: {{ .Values.envName.redisPassword }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secretKey.redis }}
+                key: db_password
+          - name: {{ .Values.envName.modelServerUrl }}
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configMap.modelServer }}
+                key: model_server_url

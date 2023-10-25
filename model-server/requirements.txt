@@ -1,0 +1,4 @@
+fastapi[all]==0.103.1
+redis==5.0.0
+transformers==4.34.1
+loguru==0.7.2

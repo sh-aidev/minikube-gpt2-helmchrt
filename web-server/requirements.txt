@@ -1,0 +1,5 @@
+fastapi[all]==0.103.1
+redis==5.0.0
+httpx==0.25.0
+requests==2.31.0
+loguru==0.7.2
